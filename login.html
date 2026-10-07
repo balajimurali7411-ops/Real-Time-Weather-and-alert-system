@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Weather Login</title>
+
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            height:100vh;
+            overflow:hidden;
+            font-family:Arial;
+            position:relative;
+            transition:1s ease;
+            background:#0b1220;
+        }
+
+        /* 🌞 DAY MODE */
+        .day{
+            background:
+            linear-gradient(to bottom,
+            #4facfe 0%,
+            #00c6ff 40%,
+            #87ceeb 100%);
+        }
+
+        /* 🌙 NIGHT MODE */
+        .night{
+            background:
+            linear-gradient(to bottom,
+            #020111 0%,
+            #191621 50%,
+            #0b1220 100%);
+        }
+
+        /* 🌧️ RAIN */
+        .rain::before{
+            content:"";
+            position:fixed;
+            inset:0;
+            background:url('https://i.gifer.com/7efs.gif');
+            background-size:cover;
+            opacity:0.18;
+            pointer-events:none;
+            z-index:0;
+        }
+
+        /* ⚡ LIGHTNING */
+        .lightning{
+            position:fixed;
+            inset:0;
+            background:white;
+            opacity:0;
+            pointer-events:none;
+            z-index:1;
+        }
+
+        .flash{
+            animation:flash 0.4s ease;
+        }
+
+        @keyframes flash{
+            0%{opacity:0;}
+            20%{opacity:0.9;}
+            100%{opacity:0;}
+        }
+
+        /* ☀️ SUN */
+        .sunGlow{
+            position:absolute;
+            top:60px;
+            right:80px;
+
+            width:170px;
+            height:170px;
+
+            border-radius:50%;
+            background:#ffd84d;
+
+            box-shadow:
+            0 0 50px #ffd84d,
+            0 0 100px #ffd84d,
+            0 0 160px #ffd84d;
+
+            animation:sunPulse 5s infinite ease-in-out;
+
+            z-index:1;
+        }
+
+        @keyframes sunPulse{
+            0%,100%{
+                transform:scale(1);
+            }
+            50%{
+                transform:scale(1.08);
+            }
+        }
+
+        /* 🌙 MOON */
+        .moon{
+            position:absolute;
+            top:70px;
+            right:90px;
+
+            width:120px;
+            height:120px;
+
+            border-radius:50%;
+            background:#f5f3ce;
+
+            box-shadow:
+            0 0 30px #f5f3ce,
+            0 0 60px #f5f3ce,
+            0 0 90px #f5f3ce;
+
+            animation:moonPulse 4s infinite ease-in-out;
+
+            z-index:1;
+        }
+
+        @keyframes moonPulse{
+            0%,100%{
+                transform:scale(1);
+            }
+            50%{
+                transform:scale(1.05);
+            }
+        }
+
+        /* ⭐ STARS */
+        .star{
+            position:absolute;
+            width:3px;
+            height:3px;
+            background:white;
+            border-radius:50%;
+            animation:twinkle 2s infinite alternate;
+            z-index:1;
+        }
+
+        @keyframes twinkle{
+            from{
+                opacity:0.2;
+            }
+
+            to{
+                opacity:1;
+            }
+        }
+
+        /* ☁️ PREMIUM CLOUDS */
+        .cloudWrap{
+            position:absolute;
+            inset:0;
+            overflow:hidden;
+            z-index:1;
+        }
+
+        .cloud{
+            position:absolute;
+            background:rgba(255,255,255,0.95);
+            border-radius:100px;
+            filter:blur(1px);
+        }
+
+        .cloud::before,
+        .cloud::after{
+            content:"";
+            position:absolute;
+            background:rgba(255,255,255,0.95);
+            border-radius:50%;
+        }
+
+        .cloud::before{
+            width:60%;
+            height:120%;
+            top:-50%;
+            left:15%;
+        }
+
+        .cloud::after{
+            width:35%;
+            height:80%;
+            top:-30%;
+            right:15%;
+        }
+
+        .cloud1{
+            width:260px;
+            height:80px;
+            top:80px;
+            left:-300px;
+            opacity:0.9;
+            animation:moveCloud1 45s linear infinite;
+        }
+
+        .cloud2{
+            width:200px;
+            height:65px;
+            top:180px;
+            left:-250px;
+            opacity:0.75;
+            animation:moveCloud2 60s linear infinite;
+        }
+
+        .cloud3{
+            width:320px;
+            height:95px;
+            top:280px;
+            left:-350px;
+            opacity:0.6;
+            animation:moveCloud3 75s linear infinite;
+        }
+
+        @keyframes moveCloud1{
+            from{
+                transform:translateX(0);
+            }
+            to{
+                transform:translateX(2200px);
+            }
+        }
+
+        @keyframes moveCloud2{
+            from{
+                transform:translateX(0);
+            }
+            to{
+                transform:translateX(2400px);
+            }
+        }
+
+        @keyframes moveCloud3{
+            from{
+                transform:translateX(0);
+            }
+            to{
+                transform:translateX(2600px);
+            }
+        }
+
+        /* 🌈 GLOW EFFECT */
+        body::after{
+            content:"";
+            position:absolute;
+
+            width:500px;
+            height:500px;
+
+            border-radius:50%;
+
+            background:#ff4ecd;
+
+            filter:blur(120px);
+
+            opacity:0.35;
+
+            bottom:-150px;
+            right:-150px;
+
+            animation:floatGlow 10s infinite ease-in-out;
+        }
+
+        @keyframes floatGlow{
+            0%,100%{
+                transform:translate(0,0);
+            }
+
+            50%{
+                transform:translate(60px,40px);
+            }
+        }
+
+        /* 🧊 LOGIN BOX */
+        .box{
+            position:absolute;
+
+            top:50%;
+            left:50%;
+
+            transform:translate(-50%,-50%);
+
+            width:360px;
+
+            padding:35px;
+
+            text-align:center;
+
+            color:white;
+
+            background:rgba(255,255,255,0.08);
+
+            backdrop-filter:blur(18px);
+
+            border:1px solid rgba(255,255,255,0.15);
+
+            border-radius:22px;
+
+            box-shadow:
+            0 20px 60px rgba(0,0,0,0.5);
+
+            animation:floatBox 4s infinite ease-in-out;
+
+            z-index:10;
+        }
+
+        @keyframes floatBox{
+            0%,100%{
+                transform:translate(-50%,-50%) translateY(0);
+            }
+
+            50%{
+                transform:translate(-50%,-50%) translateY(-12px);
+            }
+        }
+
+        h2{
+            margin-bottom:22px;
+            font-size:34px;
+        }
+
+        /* ERROR MESSAGE */
+        .error-box{
+            background:rgba(255,0,0,0.18);
+            border:1px solid rgba(255,0,0,0.4);
+            color:#ffb3b3;
+            padding:10px;
+            border-radius:10px;
+            margin-bottom:15px;
+            animation:shake 0.4s ease;
+        }
+
+        @keyframes shake{
+            0%{transform:translateX(0);}
+            25%{transform:translateX(-5px);}
+            50%{transform:translateX(5px);}
+            75%{transform:translateX(-5px);}
+            100%{transform:translateX(0);}
+        }
+
+        /* SUCCESS MESSAGE */
+        .success-box{
+            background:rgba(0,255,120,0.15);
+            border:1px solid rgba(0,255,120,0.4);
+            color:#8dffbf;
+            padding:10px;
+            border-radius:10px;
+            margin-bottom:15px;
+        }
+
+        /* TABS */
+        .tabs{
+            display:flex;
+            margin-bottom:18px;
+            border-radius:12px;
+            overflow:hidden;
+        }
+
+        .tab{
+            flex:1;
+            padding:12px;
+            cursor:pointer;
+
+            background:rgba(255,255,255,0.08);
+
+            transition:0.3s;
+        }
+
+        .tab:hover{
+            background:rgba(255,255,255,0.15);
+        }
+
+        .active{
+            background:
+            linear-gradient(90deg,
+            #4facfe,
+            #00f2fe);
+
+            font-weight:bold;
+        }
+
+        /* INPUTS */
+        input{
+            width:100%;
+            padding:14px;
+            margin:10px 0;
+
+            border:none;
+            outline:none;
+
+            border-radius:10px;
+
+            background:rgba(255,255,255,0.08);
+
+            color:white;
+
+            font-size:15px;
+        }
+
+        input::placeholder{
+            color:rgba(255,255,255,0.7);
+        }
+
+        /* BUTTON */
+        button{
+            width:100%;
+            padding:14px;
+
+            margin-top:10px;
+
+            border:none;
+
+            border-radius:10px;
+
+            background:
+            linear-gradient(90deg,
+            #4facfe,
+            #00f2fe);
+
+            color:white;
+
+            font-size:16px;
+            font-weight:bold;
+
+            cursor:pointer;
+
+            transition:0.3s;
+        }
+
+        button:hover{
+            transform:scale(1.03);
+
+            box-shadow:
+            0 0 25px rgba(79,172,254,0.5);
+        }
+
+        /* 🚀 LOADER */
+        .loader{
+            display:none;
+
+            position:fixed;
+            inset:0;
+
+            background:rgba(0,0,0,0.75);
+
+            backdrop-filter:blur(10px);
+
+            z-index:999;
+
+            justify-content:flex-start;
+            align-items:center;
+            flex-direction:column;
+
+            padding-top:60px;
+
+            color:white;
+        }
+
+        .loader h3{
+            font-size:28px;
+            margin-bottom:15px;
+        }
+
+        .dots{
+            display:flex;
+            gap:8px;
+            margin-bottom:15px;
+        }
+
+        .dots span{
+            width:10px;
+            height:10px;
+            border-radius:50%;
+            background:white;
+
+            animation:bounce 1s infinite;
+        }
+
+        .dots span:nth-child(2){
+            animation-delay:0.2s;
+        }
+
+        .dots span:nth-child(3){
+            animation-delay:0.4s;
+        }
+
+        @keyframes bounce{
+            0%,100%{
+                transform:translateY(0);
+                opacity:0.5;
+            }
+
+            50%{
+                transform:translateY(-10px);
+                opacity:1;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+<!-- WEATHER EFFECTS -->
+<div id="weatherEffects"></div>
+
+<!-- ⚡ LIGHTNING -->
+<div id="lightning" class="lightning"></div>
+
+<!-- 🔊 WEATHER SOUND -->
+<audio id="rainSound" loop>
+    <source src="https://assets.mixkit.co/active_storage/sfx/2515/2515-preview.mp3" type="audio/mpeg">
+</audio>
+
+<!-- 🚀 LOADER -->
+<div id="loader" class="loader">
+
+    <h3>👋 Welcome Back</h3>
+
+    <div class="dots">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <lottie-player
+        src="https://assets1.lottiefiles.com/packages/lf20_jcikwtux.json"
+        background="transparent"
+        speed="1"
+        style="width:220px;height:220px"
+        loop
+        autoplay>
+    </lottie-player>
+
+</div>
+
+<!-- LOGIN BOX -->
+<div class="box">
+
+    <h2 id="title">Login</h2>
+
+    <!-- ✅ ERROR MESSAGE -->
+    {% if error %}
+        <div class="error-box">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <!-- ✅ SUCCESS MESSAGE -->
+    {% if success %}
+        <div class="success-box">
+            {{ success }}
+        </div>
+    {% endif %}
+
+    <div class="tabs">
+
+        <div class="tab active"
+             id="loginTab"
+             onclick="switchTab('login')">
+             Login
+        </div>
+
+        <div class="tab"
+             id="signupTab"
+             onclick="switchTab('signup')">
+             Signup
+        </div>
+
+    </div>
+
+    <!-- LOGIN -->
+    <form id="loginForm"
+          action="/login"
+          method="POST"
+          onsubmit="showLoader()">
+
+        <input
+            name="username"
+            placeholder="Enter Username"
+            required>
+
+        <input
+            type="password"
+            name="password"
+            placeholder="Enter Password"
+            required>
+
+        <button type="submit">
+            Login
+        </button>
+
+    </form>
+
+    <!-- SIGNUP -->
+    <form id="signupForm"
+          action="/signup"
+          method="POST"
+          onsubmit="showLoader()"
+          style="display:none;">
+
+        <input
+            name="username"
+            placeholder="Create Username"
+            required>
+
+        <input
+            type="password"
+            name="password"
+            placeholder="Create Password"
+            required>
+
+        <button type="submit">
+            Signup
+        </button>
+
+    </form>
+
+</div>
+
+<script>
+
+const API_KEY =
+"193387b38b6b2c3b8680a129fa967ec7";
+
+const city = "Bangalore";
+
+/* 🌦️ LOAD WEATHER */
+async function loadWeather(){
+
+    try{
+
+        let url =
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`;
+
+        let res = await fetch(url);
+
+        let data = await res.json();
+
+        if(data.cod != 200) return;
+
+        let weather =
+        data.weather[0].main.toLowerCase();
+
+        applyWeather(weather);
+
+    }
+    catch(e){
+
+        console.log(e);
+    }
+}
+
+/* ⚡ THUNDER EFFECT */
+function startThunder(){
+
+    setInterval(() => {
+
+        const flash =
+        document.getElementById("lightning");
+
+        flash.classList.add("flash");
+
+        setTimeout(() => {
+
+            flash.classList.remove("flash");
+
+        },400);
+
+    },5000);
+}
+
+/* 🌈 APPLY WEATHER */
+function applyWeather(weather){
+
+    document.body.classList.remove(
+        "rain",
+        "day",
+        "night"
+    );
+
+    const effects =
+    document.getElementById("weatherEffects");
+
+    effects.innerHTML = "";
+
+    let hour =
+    new Date().getHours();
+
+    /* 🌙 NIGHT */
+    if(hour >= 18 || hour <= 5){
+
+        document.body.classList.add("night");
+
+        let stars = "";
+
+        for(let i=0;i<80;i++){
+
+            stars += `
+            <div class="star"
+                 style="
+                    top:${Math.random()*100}%;
+                    left:${Math.random()*100}%;
+                    animation-delay:${Math.random()*2}s;
+                 ">
+            </div>`;
+        }
+
+        effects.innerHTML += `
+            <div class="moon"></div>
+            ${stars}
+        `;
+    }
+
+    /* ☀️ DAY */
+    else{
+
+        document.body.classList.add("day");
+
+        effects.innerHTML += `
+            <div class="sunGlow"></div>
+        `;
+    }
+
+    /* 🌧️ RAIN */
+    if(weather.includes("rain")){
+
+        document.body.classList.add("rain");
+
+        document.getElementById("rainSound").play();
+    }
+
+    /* ⚡ THUNDER */
+    if(weather.includes("thunder")){
+
+        startThunder();
+    }
+
+    /* ☁️ CLOUDS */
+    if(weather.includes("cloud")){
+
+        effects.innerHTML += `
+        <div class="cloudWrap">
+
+            <div class="cloud cloud1"></div>
+
+            <div class="cloud cloud2"></div>
+
+            <div class="cloud cloud3"></div>
+
+        </div>
+        `;
+    }
+}
+
+loadWeather();
+
+/* 🔄 SWITCH TABS */
+function switchTab(type){
+
+    loginForm.style.display =
+    type === "login"
+    ? "block"
+    : "none";
+
+    signupForm.style.display =
+    type === "signup"
+    ? "block"
+    : "none";
+
+    loginTab.classList.toggle(
+        "active",
+        type==="login"
+    );
+
+    signupTab.classList.toggle(
+        "active",
+        type==="signup"
+    );
+
+    title.innerText =
+    type === "login"
+    ? "Login"
+    : "Signup";
+}
+
+/* 🚀 FAST LOADER */
+function showLoader(){
+
+    loader.style.display = "flex";
+
+    setTimeout(()=>{
+
+        loader.style.display = "none";
+
+    },700);
+}
+
+</script>
+
+</body>
+</html>
